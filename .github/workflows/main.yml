@@ -1,0 +1,56 @@
+name: Build APK and IPA
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+
+      - name: Build APK
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release.apk
+          path: app/build/outputs/apk/release/app-release.apk
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Xcode
+        run: sudo xcode-select -s /Applications/Xcode_12.4.app
+
+      - name: Install dependencies
+        run: |
+          brew install cocoapods
+          pod install --project-directory=./ios
+
+      - name: Build IPA
+        run: xcodebuild -workspace ios/YourApp.xcworkspace -scheme YourApp -sdk iphoneos -configuration AppStoreDistribution archive -archivePath $PWD/build/YourApp.xcarchive
+
+      - name: Export IPA
+        run: xcodebuild -exportArchive -archivePath $PWD/build/YourApp.xcarchive -exportOptionsPlist ios/exportOptions.plist -exportPath $PWD/build/YourApp
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v2
+        with:
+          name: YourApp.ipa
+          path: build/YourApp/YourApp.ipa
