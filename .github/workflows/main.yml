@@ -26,12 +26,12 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '21'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.29.2'
 
       - name: Install dependencies
         run: flutter pub get
@@ -40,7 +40,7 @@ jobs:
         run: flutter build apk --release
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: app-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk
@@ -58,11 +58,10 @@ jobs:
 
       - name: Clone Gerrit repository
         run: git clone ssh://username@gerrit.example.com:29418/project-name.git
-
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.29.2'
 
       - name: Install dependencies
         run: flutter pub get
@@ -84,7 +83,7 @@ jobs:
           xcodebuild -exportArchive -archivePath $PWD/build/Runner.xcarchive -exportOptionsPlist ios/exportOptions.plist -exportPath $PWD/build/Runner
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: Runner.ipa
           path: build/Runner/Runner.ipa
